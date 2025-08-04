@@ -107,3 +107,16 @@ CREATE TABLE modified_answer (
 - Подключение к PostgreSQL настраивается через переменные окружения (`DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`).  
 - В ответ возвращается ID записи в базе.  
 - Логика преобразования содержится в функции `transform_answer_data`.
+
+## Переменные окружения
+Для подключения к базе данных PostgreSQL настройте переменные окружения:
+
+```
+DB_NAME=safety_db
+DB_USER=your_db_user
+DB_PASSWORD=your_secure_password
+DB_HOST=your_db_host_or_ip
+DB_PORT=5432
+```
+В Yandex Cloud Function эти переменные задаются через настройки функции в разделе **Переменные окружения**
+
