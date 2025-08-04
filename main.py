@@ -15,25 +15,22 @@ def get_connection():
 def extract_values_only(data: Dict[str, Any]) -> Dict[str, Any]:
     values_only = {}
     for key, value in data.items():
-        if value is not None and isinstance(value, dict) and 'value' in value:
+        if value and isinstance(value, dict) and 'value' in value:
             v = value['value']
             if isinstance(v, list):
-                texts = []
-                paths = []
-                cleaned_values = []
+                texts, paths, cleaned_values = [], [], []
                 for item in v:
                     if isinstance(item, dict):
                         if 'text' in item:
                             texts.append(item['text'])
                         elif 'path' in item:
-                            # Автоматическая замена пути к файлу (Яндекс Формы -> S3)
+                            # Заменяем путь к файлу Яндекс Форм на S3 URL
                             new_path = item['path'].replace(
                                 'https://forms.yandex.ru/cloud/files?path=%2Fforms-cloud%2F',
                                 'https://storage.yandexcloud.net/forms-cloud/'
                             )
                             paths.append(new_path)
                         else:
-                            # Очищаем неважные поля для прочих вложенных dict
                             for field in ['key', 'name', 'size', 'slug']:
                                 item.pop(field, None)
                             cleaned_values.append(item)
@@ -43,9 +40,7 @@ def extract_values_only(data: Dict[str, Any]) -> Dict[str, Any]:
                     values_only[key] = ', '.join(paths)
                 elif cleaned_values:
                     values_only[key] = cleaned_values
-            elif isinstance(v, str):
-                values_only[key] = v
-            elif isinstance(v, (int, float)):
+            elif isinstance(v, (str, int, float)):
                 values_only[key] = str(v)
             elif isinstance(v, dict) and 'begin' in v and 'end' in v:
                 begin_date = v['begin']
@@ -61,16 +56,14 @@ def transform_group(group: List[dict]) -> List[dict]:
     return [extract_values_only(item) for item in group]
 
 def transform_answer_data(answer: dict) -> dict:
-    """
-    Поддерживает плоскую и вложенную структуру (answer->data).
-    Обрабатывает группы answer_group*.
-    """
-    # Универсальный доступ к data
-    data = None
-    if isinstance(answer, dict) and "answer" in answer and "data" in answer["answer"]:
-        data = answer["answer"]["data"]
-    elif isinstance(answer, dict) and "data" in answer:
-        data = answer["data"]
+    # Извлекаем поле data из вложенной структуры
+    if isinstance(answer, dict):
+        if "answer" in answer and "data" in answer["answer"]:
+            data = answer["answer"]["data"]
+        elif "data" in answer:
+            data = answer["data"]
+        else:
+            return {}
     else:
         return {}
 
