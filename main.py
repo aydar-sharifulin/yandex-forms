@@ -5,11 +5,11 @@ from typing import Dict, Any, List
 
 def get_connection():
     return psycopg2.connect(
-        dbname=os.getenv("DB_NAME", "safety_db"),
-        user=os.getenv("DB_USER", "user"),
-        password=os.getenv("DB_PASSWORD", "password"),
-        host=os.getenv("DB_HOST", "localhost"),
-        port=int(os.getenv("DB_PORT", 5432))
+        dbname=os.environ["DB_NAME"],
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASSWORD"],
+        host=os.environ["DB_HOST"],
+        port=int(os.environ["DB_PORT"])
     )
 
 def extract_values_only(data: Dict[str, Any]) -> Dict[str, Any]:
