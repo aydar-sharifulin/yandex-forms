@@ -94,10 +94,15 @@ CREATE TABLE modified_answer (
 ```
 ## Использование
 Развернуть код в Yandex Cloud Function.
+
 Передавать POST-запросы с JSON-ответом формы Яндекс в тело запроса.
+
 Функция handler(event, context) — точка входа, принимает event с телом запроса.
+
 Подключение к PostgreSQL настраивается через переменные окружения (DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT).
+
 В ответ возвращается ID записи в базе.
+
 Логика преобразования содержится в функции transform_answer_data.
 
 
